@@ -9,6 +9,7 @@ from network.BcascadeDeformation import BranchCascadeRegistrator
 from network.SingleDeformation import SingleDeformation
 from network.orgDeformation import OrgSingleDeformation
 from network.two_stage_Deformation import TwoStageDeformationGenerator
+from network.AffineRegistrator import AffineRegistrator
 from utils.visualizer import MMIR_Visualer
 from tqdm import tqdm
 
@@ -27,7 +28,7 @@ def baseparser():
     parser.add_argument('-d','--debug',action='store_true')
     parser.add_argument('-i_size','--img_size',type=list, default = [512,512])
     parser.add_argument('-device','--device',type=str, default='cuda')
-    parser.add_argument('-lr',type=float, default=1e-4)
+    parser.add_argument('-lr',type=float, default=1e-3)
     parser.add_argument('-v','--visualizer', action='store_true')
     parser.add_argument('-s','--seed',type=int, default=1)
     #model
@@ -79,6 +80,8 @@ class Trainner:
             self.model = OrgSingleDeformation(cfg)
         elif cfg.model == 'T':
             self.model =TwoStageDeformationGenerator(cfg)
+        elif cfg.model == 'A':
+            self.model = AffineRegistrator(cfg)
             
         else:
             assert f"no model type {cfg.model}"
@@ -159,8 +162,10 @@ class Trainner:
             rgb_mask = rgb_mask.cuda()
             _, _ = self.model(ir, rgb)
             
-            warped_ir_mask_affine = self.model.netAffine.warping(ir_mask ,self.model.homography)
-            warped_ir_mask  = self.model.netDFG.warping(warped_ir_mask_affine, self.model.ir_grid)
+            warped_ir_mask = self.model.netR.warping(ir_mask, self.model.ir_grid)
+            
+            # warped_ir_mask_affine = self.model.netAffine.warping(ir_mask ,self.model.homography)
+            # warped_ir_mask  = self.model.netDFG.warping(warped_ir_mask_affine, self.model.ir_grid)
 
             iou = calcualte_IOU(warped_ir_mask,rgb_mask)
             ious.append(iou)
@@ -191,7 +196,7 @@ if __name__=='__main__':
     
     cfg = baseparser()
     # model = BranchCascadeRegistrator(cfg)
-    for t in range(cfg.loop):
+    for t in range(19,cfg.loop):
         cfg.seed = t
         
         random.seed(cfg.seed)

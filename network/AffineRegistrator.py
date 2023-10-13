@@ -3,18 +3,18 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import init
 from .netT import UnetGenerator as MT
-from .netR.net_Origin import UnetSTN
+from .netR.affine_stn import AffineSTN
 from .netT.utils import GANLoss
 import itertools
 
 
-class OrgSingleDeformation(nn.Module):
+class AffineRegistrator(nn.Module):
     def __init__(self,cfg):
         super().__init__()
         self.device='cuda'
         self.cfg = cfg
         self.netT = MT.UnetGenerator(1,1,8,64)
-        self.netR = UnetSTN(cfg)
+        self.netR = AffineSTN(cfg)
         self.netD = MT.NLayerDiscriminator(2, 64, n_layers=3)
         
         self.criterionGAN = GANLoss('vanilla').to(self.device)  # define GAN loss.

@@ -159,8 +159,10 @@ class Trainner:
             rgb_mask = rgb_mask.cuda()
             _, _ = self.model(ir, rgb)
             
-            warped_ir_mask_affine = self.model.netAffine.warping(ir_mask ,self.model.homography)
-            warped_ir_mask  = self.model.netDFG.warping(warped_ir_mask_affine, self.model.ir_grid)
+            warped_ir_mask = self.model.netR.warping(ir_mask, self.model.ir_grid)
+            
+            # warped_ir_mask_affine = self.model.netAffine.warping(ir_mask ,self.model.homography)
+            # warped_ir_mask  = self.model.netDFG.warping(warped_ir_mask_affine, self.model.ir_grid)
 
             iou = calcualte_IOU(warped_ir_mask,rgb_mask)
             ious.append(iou)
@@ -191,7 +193,7 @@ if __name__=='__main__':
     
     cfg = baseparser()
     # model = BranchCascadeRegistrator(cfg)
-    for t in range(cfg.loop):
+    for t in range(19,cfg.loop):
         cfg.seed = t
         
         random.seed(cfg.seed)
