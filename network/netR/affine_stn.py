@@ -141,3 +141,6 @@ class AffineSTN(nn.Module):
     def _calculate_regularization_term(self, theta):
         x = torch.mean(torch.abs(theta))
         return x
+    
+    
+    

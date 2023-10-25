@@ -6,6 +6,7 @@ from .block import ResnetBlock
 from ..netT.utils import smoothness_loss
 
 
+# act = 'leaky_relu' #org
 act = 'leaky_relu'
 
 class ResUnet(nn.Module):

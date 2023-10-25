@@ -20,16 +20,16 @@ import random
 def baseparser():
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--loop', type=int, default=1)
+    parser.add_argument('--loop', type=int, default=19)
     
-    parser.add_argument('-e','--n_epoch',type=int, default=10)
-    parser.add_argument('-ee','--eval_epoch',type=int, default=5)
+    parser.add_argument('-e','--n_epoch',type=int, default=9)
+    parser.add_argument('-ee','--eval_epoch',type=int, default=3)
     parser.add_argument('-d','--debug',action='store_true')
     parser.add_argument('-i_size','--img_size',type=list, default = [512,512])
     parser.add_argument('-device','--device',type=str, default='cuda')
     parser.add_argument('-lr',type=float, default=1e-4)
     parser.add_argument('-v','--visualizer', action='store_true')
-    parser.add_argument('-s','--seed',type=int, default=1)
+    parser.add_argument('-s','--seed',type=int, default=19)
     #model
     parser.add_argument('-m','--model',type=str,default='Bcascade')
     
@@ -190,15 +190,26 @@ class Trainner:
 if __name__=='__main__':
     
     cfg = baseparser()
-    # model = BranchCascadeRegistrator(cfg)
-    for t in range(cfg.loop):
-        cfg.seed = t
-        
-        random.seed(cfg.seed)
-        torch.manual_seed(cfg.seed)
-        
-        Tm = Trainner(cfg)
-        Tm.train()
+    # # model = BranchCascadeRegistrator(cfg)        
+    # random.seed(cfg.seed)
+    # torch.manual_seed(cfg.seed)
     
-    pass
+    # Tm = Trainner(cfg)
+    # Tm.train()
+    
+    # for t in range(cfg.loop):
+    for lr in [1e-5,1e-3]:
+        cfg.lr= lr
+        for t in [26,27,29]:
+            cfg.seed = t
+
+            
+            
+            random.seed(cfg.seed)
+            torch.manual_seed(cfg.seed)
+            
+            Tm = Trainner(cfg)
+            Tm.train()
+        
+        pass
 
